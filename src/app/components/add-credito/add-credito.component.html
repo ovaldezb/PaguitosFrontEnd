@@ -1,0 +1,134 @@
+<div class="container">
+  <div class="row">
+    <div class="col"><label for="">Cliente</label></div>
+  </div>
+  <div class="row card" style="border: 1px solid black;">
+    <div class="row g-3">
+      <div class="col-md-3">
+          <input type="text" class="form-control" name="nombre" #nombre="ngModel" [(ngModel)]="cliente.nombre" placeholder="Nombre" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-3">
+          <input type="text" class="form-control" name="telefono" #telefono="ngModel" [(ngModel)]="cliente.telefono" placeholder="Teléfono" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-3">
+          <input type="text" class="form-control" name="correo" #correo="ngModel" [(ngModel)]="cliente.correoElectronico" placeholder="Correo Electrónico" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-3 mb-3">
+          <input type="text" class="form-control" name="direccion" #direccion="ngModel" [(ngModel)]="cliente.direccion" placeholder="Dirección" [disabled]="!isNuevo">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label for="">Equipo</label>
+    </div>
+  </div>
+  <div class="row card" style="border: 1px solid blue;">
+    <div class="row g-3">
+      <div class="col-md-3 mb-3">
+          <input type="text" class="form-control" name="marca" #marca="ngModel" [(ngModel)]="credito.equipo.marca" placeholder="Marca" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-3 mb-3">
+          <input type="text" class="form-control" name="modelo" #modelo="ngModel" [(ngModel)]="credito.equipo.modelo" placeholder="Modelo" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-3 mb-3">
+          <input type="text" class="form-control" name="noSerie" #noSerie="ngModel" [(ngModel)]="credito.equipo.noSerie" placeholder="No Serie" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-3 mb-3">
+          <input type="number" class="form-control" name="costo" #costo="ngModel" [(ngModel)]="credito.equipo.costo" placeholder="Costo" [disabled]="!isNuevo">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label for="">Crédito</label>
+    </div>
+  </div>
+  <div class="row card" style="border: 1px solid green;">
+    <div class="row g-3">
+      <div class="col-md-2 mb-3">
+        <div style="text-align: center;">
+          <label for="" >Enganche</label>
+        </div>
+        <input class="form-control" type="number" name="enganche" #enganche="ngModel" [(ngModel)]="credito.enganche" (blur)="calculaMontoPagos()" placeholder="Enganche" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-2 mb-3">
+        <div style="text-align: center;">
+          <label for="">No de Pagos</label>
+        </div>
+        <input class="form-control" type="number" name="noPagos" #noPagos="ngModel" [(ngModel)]="credito.noPagosTotales" placeholder="Número de Pagos" (change)="calculaMontoPagos()" (keyup)="calculaMontoPagos()" [disabled]="!isNuevo">
+      </div>
+      <div class="col-md-2 mb-3">
+        <div style="text-align: center;">
+          <label for="">Periodo Pago</label>
+        </div> 
+        <select class="form-select" name="plazoPago" [(ngModel)]="credito.plazoPago" id="" [disabled]="!isNuevo">
+          <option value="quincenal">Quincenal</option>
+          <option value="mensual">Mensual</option>
+        </select>
+      </div>
+      <div class="col-md-2 mb-3"></div>
+      <div class="col-md-2 mb-3">
+        <div style="text-align: center;">
+          <label for="">Por pagar: </label>
+        </div>
+        <input type="text" class="form-control" name="" disabled value="{{pendientePago | currency}}">
+      </div>
+      <div class="col-md-2 mb-3">
+        <div style="text-align: center;">
+          <label for="">{{credito.noPagosTotales}} pagos de:</label>
+        </div>
+        <input type="text" class="form-control" name="" disabled value="{{credito.pago| currency}}">
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!isNuevo" class="row">
+    <div class="col">
+      <label for="">Pagos:</label>
+    </div>
+  </div>
+  <div *ngIf="!isNuevo" class="row card" style="border: 1px solid goldenrod;height: 250px;">
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <table class="table"> 
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+          </table>
+          <div>
+            <table class="table">
+              <tbody>
+                <tr *ngFor="let pago of pagos; let i = index">
+                  <td>{{i+1}}/{{credito.noPagosTotales}}</td>
+                  <td>{{pago.fechaPago | date:'dd-MMM-YYYY'}}</td>
+                  <td>{{pago.montoPago | currency:'MXN'}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col">
+          <div class="row"></div>
+          <div class="row g-3">
+            <div class="col mb-3">Cantidad a Pagar</div>
+            <div class="col mb-3">
+              <input type="number" class="form-control" name="pago" #pago="ngModel" [(ngModel)]="credito.pago">
+            </div>
+            <div class="col mb-3">
+              <button class="btn btn-info" (click)="addPago()">Pagar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> 
+  </div>
+  <div style="text-align: right;">
+    <button class="btn btn-secondary" (click)="cancelaAltaCredito()">Cerrar</button>
+    <button *ngIf="isNuevo" class="btn btn-info" (click)="agregaEditaCredito()">Agregar</button>
+  </div>
+</div>

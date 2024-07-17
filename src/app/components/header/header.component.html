@@ -1,0 +1,12 @@
+<ul class="nav nav-tabs justify-content-center">
+  <li class="nav-item">
+    <a *ngIf="tabActivo=='CREDITOS'" class="nav-link active" aria-current="page" href="#" aria-disabled="true">Lista Créditos</a>
+    <a *ngIf="tabActivo!='CREDITOS'" class="nav-link" aria-current="page" href="#" (click)="clickAction('CREDITOS')">Lista Créditos</a>
+  </li>
+  <li class="nav-item">
+    <a *ngIf="tabActivo=='CLIENTES'" class="nav-link active" href="#">Clientes</a>
+    <a *ngIf="tabActivo!='CLIENTES'" class="nav-link" href="#" (click)="clickAction('CLIENTES')">Clientes</a>
+  </li>
+</ul>
+<app-lista-credito *ngIf="tabActivo=='CREDITOS'"></app-lista-credito>
+<app-lista-cliente *ngIf="tabActivo=='CLIENTES'"></app-lista-cliente>

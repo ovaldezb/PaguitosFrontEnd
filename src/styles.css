@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+.selected {  
+  background-color:#167ef5 !important;  
+  color: white !important;  
+} 
+
+.alignCenterRow{
+  text-align: center;
+}
+.alignLeftRow{
+  text-align: left;
+}
