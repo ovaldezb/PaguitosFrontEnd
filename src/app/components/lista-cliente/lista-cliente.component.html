@@ -1,14 +1,20 @@
 <div class="container">
   <h2>Lista de Clientes</h2>
-  <table class="table">
+  <!--table class="table">
     <thead>
       <tr>
-        <th style="text-align: right;"><button class="btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><fa-icon [icon]="faUserPlus"></fa-icon></button></th>
-        <th style="text-align: right;"><fa-icon [icon]="faTrash"></fa-icon> </th>
+        <th style="text-align: right;"><button class="btn btn-info"><fa-icon [icon]="faUserPlus"></fa-icon></button></th>
+        <th style="text-align: right;"><button class="btn" (click)="openCloseModal(true)" [disabled]="HighlightRow==-1"><fa-icon [icon]="faPencil"></fa-icon></button></th>
       </tr>
     </thead>
-  </table>
-  <table class="table">
+  </table-->
+  <table class="table table-bordered">
+    <colgroup>
+    <col width="25%">
+    <col width="25%">
+    <col width="25%">
+    <col width="25%">
+    </colgroup>
     <thead>
       <tr>
         <th style="text-align: center;">Nombre</th>
@@ -18,26 +24,62 @@
       </tr>
     </thead>
   </table>
-  <!-- Button trigger modal -->
-
-
+  <div style="border: 1px solid blue;height: 500px;overflow: auto;margin-top: -16px;">
+    <table class="table table-hover table-bordered">
+      <colgroup>
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        </colgroup>
+      <tbody>
+        <tr *ngFor="let cliente of clientes; let i= index;" (click)="clickRow(i)" (dblclick)="openCloseModal(true)">
+          <td [class.selected]="i == HighlightRow">{{cliente.nombre}}</td>
+          <td [class.selected]="i == HighlightRow">{{cliente.telefono}}</td>
+          <td [class.selected]="i == HighlightRow">{{cliente.correoElectronico}}</td>
+          <td [class.selected]="i == HighlightRow">{{cliente.direccion}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div *ngIf="isOpenModal" class="modal fade show" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: block;" aria-labelledby="staticBackdropLabel" aria-modal="true" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Agregar Usuario</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="staticBackdropLabel">Editar Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="openCloseModal(false)"></button>
       </div>
       <div class="modal-body">
-        ...
+       <div class="row">
+        <div class="col">Nombre:</div>
+        <div class="col">
+          <input type="text" class="form-control" name="nombre" #nombre="ngModel" [(ngModel)]="cliente.nombre">
+        </div>
+       </div>
+       <div class="row">
+        <div class="col">Teléfono</div>
+        <div class="col">
+          <input type="text" class="form-control" name="telefono" #telefono="ngModel" [(ngModel)]="cliente.telefono">
+        </div>
+       </div>
+       <div class="row">
+        <div class="col">Correo:</div>
+        <div class="col">
+          <input type="text" class="form-control" name="correo" #correo="ngModel" [(ngModel)]="cliente.correoElectronico">
+        </div>
+       </div>
+       <div class="row">
+        <div class="col">Dirección</div>
+        <div class="col">
+          <input type="text" class="form-control" name="direccion" #direccion="ngModel" [(ngModel)]="cliente.direccion">
+        </div>
+       </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary">Agregar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="openCloseModal(false)">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="actualizarCliente()">OK</button>
       </div>
     </div>
   </div>
-</div>
-
-</div>

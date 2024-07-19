@@ -23,9 +23,10 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
   @Input() creditoInit:Credito= {} as Credito;
   @Output() respuesta = new EventEmitter();
   public cliente:Cliente= new Cliente('','','','','');
-  public credito:Credito= new Credito(new Equipo('','','',0),'',new Cliente('','','','',''),0,0,0,[],'quincenal',false, new Date(),'');
+  public credito:Credito= new Credito(new Equipo('','','',0),'',new Cliente('','','','',''),0,0,0,[],'quincenal',false, new Date(),'','');
   public pago:Pago= new Pago(new Date(),0);
   pagos:Pago[]=[];
+  clientes:Cliente[]=[];
   montoPago:number=0;
   pendientePago:number=0;
   faCirclePlus = faCirclePlus;
@@ -54,7 +55,7 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
           let totalPagado = this.credito.equipo.costo - this.credito.enganche - this.credito.pagos.reduce((a,pago)=>a+pago.montoPago,0) - this.credito.pago;
           let isPagado = totalPagado <= 0 ? 'true' : 'false';
           this.pago = new Pago(new Date(),this.credito.pago);
-          this.creditoService.addPago(this.pago,this.credito.id!, isPagado)
+          this.creditoService.addPago(this.pago,this.credito.id!, isPagado, new Intl.NumberFormat().format(totalPagado))
             .subscribe(res=>{
               if(res.status==Global.OK){
                 this.pagos = res.body.pagos;
@@ -70,6 +71,26 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
       });
   }
 
+  buscaClientePorNombre(){
+    if(this.cliente.nombre.length<3) {
+      this.clientes = [];
+      return;
+    }else if(this.cliente.nombre.length >3 && this.clientes.length===0){
+      return;
+    }
+    this.clienteService.getClientesByNombre(this.cliente.nombre)
+    .subscribe(res=>{
+      if(res.status===Global.OK){
+        this.clientes = res.body;
+      }
+    });
+  }
+
+  selectCliente(index:number){
+    this.cliente = this.clientes[index];
+    this.clientes = [];
+  }
+
   calculaMontoPagos(){
    if(this.credito.equipo.costo != 0){
     this.pendientePago = this.credito.equipo.costo - this.credito.enganche;
@@ -78,7 +99,7 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
   }
 
   cancelaAltaCredito(){
-    this.credito = new Credito(new Equipo('','','',0),'',new Cliente('','','','',''),0,0,0,[],'quincenal',false, new Date(),'');
+    this.credito = new Credito(new Equipo('','','',0),'',new Cliente('','','','',''),0,0,0,[],'quincenal',false, new Date(),'','');
     this.respuesta.emit({flag:this.isBuscar});
   }
 
@@ -91,13 +112,31 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
     .then(resultado=>{
       if(resultado.isConfirmed){
         this.credito.fechaOpenCredito = new Date();
-        this.clienteService
-          .addCliente(this.cliente)
-          .subscribe(res1=>{
-            if(res1.status==Global.OK){
-              this.credito.idCliente = res1.body.id;
-              delete this.credito["_id"];
-              this.creditoService.addCredito(this.credito)
+        if(this.cliente.id === "" || this.cliente.id===undefined){ //para cuando el cliente es nuevo
+          this.clienteService
+            .addCliente(this.cliente)
+            .subscribe(res1=>{
+              if(res1.status==Global.OK){
+                this.credito.idCliente = res1.body.id;
+                this.credito.adeudo = new Intl.NumberFormat().format(this.credito.equipo.costo - this.credito.enganche);
+                delete this.credito["_id"];
+                this.creditoService.addCredito(this.credito)
+                .subscribe(res2=>{
+                  if(res2.status==Global.OK){
+                    Swal.fire({
+                      text:'Se guardo el crédito',
+                      timer:1500
+                    });
+                    this.respuesta.emit({flag:true});
+                  }
+                });
+              }
+            });
+        }else{
+          this.credito.idCliente = this.cliente.id!;
+          this.credito.adeudo = new Intl.NumberFormat().format(this.credito.equipo.costo - this.credito.enganche);
+          delete this.credito["_id"];
+          this.creditoService.addCredito(this.credito)
               .subscribe(res2=>{
                 if(res2.status==Global.OK){
                   Swal.fire({
@@ -107,8 +146,7 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
                   this.respuesta.emit({flag:true});
                 }
               });
-            }
-          });
+        }
       }
     });
   }

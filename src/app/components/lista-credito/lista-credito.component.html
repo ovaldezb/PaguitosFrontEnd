@@ -6,8 +6,13 @@
         <th style="text-align: left;">
           Filtro: <input type="text"  name="filtro" [(ngModel)]="filtro" (keyup)="filtraDatos()">
         </th>
-        <th style="text-align: center;"><button class="btn" (click)="addCredito(-1)"><fa-icon [icon]="faCirclePlus"></fa-icon></button></th>
-        <th style="text-align: center;"><fa-icon [icon]="faTrash"></fa-icon> </th>
+        <th style="text-align: center;">
+          <button class="btn" (click)="addCredito(-1)">
+            <fa-icon [icon]="faCirclePlus"></fa-icon>
+          </button>
+        </th>
+        <th style="text-align: center;">
+          <button class="btn" (click)="borraCredito()" [disabled]="HighlightRow==-1" > <fa-icon [icon]="faTrash" ></fa-icon></button> </th>
         <th style="text-align: right;">
           <label for="">Todos</label>
           <input type="checkbox" name="tipoBusqueda" id="tipoBusquedaId" #tipoBusquedaId [(ngModel)]="tipoBusqueda" (change)="buscaCredito(tipoBusquedaId.checked)" [checked]="tipoBusqueda">
@@ -17,11 +22,12 @@
   </table>
   <table class="table">
     <colgroup>
-      <col width="25%">
-      <col width="15%">
+      <col width="20%">
+      <col width="10%">
       <col width="15%">
       <col width="20%">
       <col width="15%">
+      <col width="10%">
       <col width="10%">
     </colgroup>
     <thead>
@@ -31,28 +37,31 @@
         <th style="text-align: center;">Correo Electrónico</th>
         <th style="text-align: center;">Equipo</th>
         <th style="text-align: center;">Costo</th>
+        <th style="text-align: center;">Adeudo</th>
         <th style="text-align: center;">Pend</th>
       </tr>
     </thead>
   </table>
   <div style="margin-top: -16px;height: 500px;overflow: auto;border: 1px solid green;">
-    <table class="table" id="tblCreditos">
+    <table class="table table-bordered" id="tblCreditos">
       <colgroup>
-        <col width="25%">
-        <col width="15%">
+        <col width="20%">
+        <col width="10%">
         <col width="15%">
         <col width="20%">
         <col width="15%">
         <col width="10%">
+        <col width="10%">
       </colgroup>
       <tbody>
         <tr *ngFor="let credito of listaCreditos; let i = index;"  (dblclick)="addCredito(i)" (click)="ClickedRow(i)"  >
-          <td class="alignLeftRow">{{credito.cliente.nombre}}</td>
-          <td style="text-align: center;" [class.selected]="i == HighlightRow">{{credito.cliente.telefono}}</td>
-          <td style="text-align: center;">{{credito.cliente.correoElectronico}}</td>
-          <td style="text-align: center;">{{credito.equipo.marca}}-{{credito.equipo.modelo}}</td>
-          <td style="text-align: center;">{{credito.equipo.costo | currency}}</td>
-          <td style="text-align: center;">{{credito.noPagosTotales - credito.pagos.length}}</td>
+          <td class="alignLeftRow" [class.selected]="i == HighlightRow">{{credito.cliente.nombre}}</td>
+          <td class="alignLeftRow" [class.selected]="i == HighlightRow">{{credito.cliente.telefono}}</td>
+          <td class="alignLeftRow" [class.selected]="i == HighlightRow">{{credito.cliente.correoElectronico}}</td>
+          <td class="alignCenterRow" [class.selected]="i == HighlightRow">{{credito.equipo.marca}}-{{credito.equipo.modelo}}</td>
+          <td class="alignCenterRow" [class.selected]="i == HighlightRow">{{credito.equipo.costo | currency}}</td>
+          <td class="alignCenterRow" [class.selected]="i == HighlightRow">${{credito.adeudo}}</td>
+          <td class="alignCenterRow" [class.selected]="i == HighlightRow">{{credito.noPagosTotales - credito.pagos.length}}</td>
         </tr>
       </tbody>
     </table>

@@ -24,8 +24,8 @@ export class CreditoService {
     return this._http.post(Global.urlCredito,credito,{observe:'response'});
   }
 
-  addPago(pago:Pago, idCredito:string, isPagado:string):Observable<any>{
-    return this._http.put(Global.urlCredito+'/'+idCredito+'/'+isPagado,pago,{observe:'response'});
+  addPago(pago:Pago, idCredito:string, isPagado:string, adeudo:string):Observable<any>{
+    return this._http.put(Global.urlCredito+'/'+idCredito+'/'+isPagado+'/'+adeudo,pago,{observe:'response'});
   }
 
   removeCredito(idCredito:string):Observable<any>{

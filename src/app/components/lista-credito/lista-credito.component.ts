@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { faCirclePlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { CreditoService } from '../../service/credito.service';
 import { Credito } from '../../models/Credito';
+import Swal from 'sweetalert2';
+import { Global } from '../../service/Global';
 
 @Component({
   selector: 'app-lista-credito',
@@ -37,7 +39,8 @@ export class ListaCreditoComponent implements OnInit{
     this.creditoService.getAllCreditos()
       .subscribe(res=>{
         if(res.status==200){
-          this.listaCreditos = res.body;
+          let array = res.body;
+          this.listaCreditos = array.sort((a:any,b:any)=>{new Date(a.fechaOpenCredito).getTime() - new Date(b.fechaOpenCredito).getTime() });
         }
       });
   }
@@ -67,8 +70,30 @@ export class ListaCreditoComponent implements OnInit{
   }
 
   ClickedRow(index:number){
-    console.log("Clicked "+index)
     this.HighlightRow = index;
+  }
+
+  borraCredito(){
+    Swal.fire({
+      titleText:'Desea eliminar este crédito?',
+      showCancelButton:true,
+      confirmButtonText:'Si'
+    })
+    .then(response=>{
+      if(response.isConfirmed){
+        this.creditoService.removeCredito(this.listaCreditos[this.HighlightRow].id!)
+        .subscribe(res=>{
+          if(res.status===Global.OK){
+            Swal.fire({
+              titleText:"El Crédito se ha eliminado",
+              timer:1500
+            });
+            this.HighlightRow = -1;
+            this.getCreditosActivos();
+          }
+        });
+      }
+    })
   }
 
   filtraDatos(){

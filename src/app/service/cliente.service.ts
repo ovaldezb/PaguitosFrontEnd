@@ -19,6 +19,10 @@ export class ClienteService {
     return this._http.get(Global.urlCliente,{observe:'response'});
   }
 
+  getClientesByNombre(nombre:string):Observable<any>{
+    return this._http.get(Global.urlCliente+'/'+nombre,{observe:'response'});
+  }
+
   updateCliente(idCliente:string, cliente:Cliente ):Observable<any>{
     return this._http.put(Global.urlCliente+'/'+idCliente,cliente,{observe:'response'});
   }
