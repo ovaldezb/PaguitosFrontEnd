@@ -10,6 +10,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddCreditoComponent } from './components/add-credito/add-credito.component';
 import { provideHttpClient } from '@angular/common/http';
+import { UserRefusedComponent } from './components/user-refused/user-refused.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { provideHttpClient } from '@angular/common/http';
     ListaCreditoComponent,
     ListaClienteComponent,
     HeaderComponent,
-    AddCreditoComponent
+    AddCreditoComponent,
+    UserRefusedComponent
   ],
   imports: [
     BrowserModule,

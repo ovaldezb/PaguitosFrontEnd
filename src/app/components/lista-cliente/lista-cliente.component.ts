@@ -4,18 +4,31 @@ import { Cliente } from '../../models/Cliente';
 import { ClienteService } from '../../service/cliente.service';
 import { Global } from '../../service/Global';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { UsuarioService } from '../../service/usuario.service';
 
 @Component({
   selector: 'app-lista-cliente',
   templateUrl: './lista-cliente.component.html',
   styleUrl: './lista-cliente.component.css',
-  providers:[ClienteService]
+  providers:[ClienteService, UsuarioService]
 })
 export class ListaClienteComponent implements OnInit {
   
-  constructor(private clienteService:ClienteService){}
+  constructor(private clienteService:ClienteService,
+    private usuarioService: UsuarioService,
+    private router:Router
+  ){}
   ngOnInit(): void {
-   this.getAllClientes();
+    this.usuarioService.getUserName()
+    .subscribe(res=>{
+      if(res.status===Global.OK && res.body.userName===Global.USER){
+        this.getAllClientes();
+      }else{
+        this.router.navigate(['refused']);
+      }
+    })
+   
   }
   faUserPlus = faUserPlus;
   faPencil = faPencil;

@@ -1,7 +1,10 @@
 export var Global = {
-  urlCliente:'http://localhost:9080/api/cliente',
-  urlCredito:'http://localhost:9080/api/credito',
-  urlUsuario:'http://localhost:9080/api/usuario',
+  backEndServer:'http://localhost:9080',
+  urlCliente:'/api/cliente',
+  urlCredito:'/api/credito',
+  urlUsuario:'/api/usuario',
+  urlEmail:'/api/email',
   TAB_CREDITO:'CREDITOS',
-  OK:200
+  OK:200,
+  USER:'marco'
 }

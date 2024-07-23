@@ -11,6 +11,6 @@ export class UsuarioService {
   constructor(private _http:HttpClient) { }
 
   getUserName():Observable<any>{
-    return this._http.get(Global.urlUsuario,{observe:'response'});
+    return this._http.get(Global.backEndServer+Global.urlUsuario,{observe:'response'});
   }
 }

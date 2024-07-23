@@ -4,18 +4,30 @@ import { CreditoService } from '../../service/credito.service';
 import { Credito } from '../../models/Credito';
 import Swal from 'sweetalert2';
 import { Global } from '../../service/Global';
+import { UsuarioService } from '../../service/usuario.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-lista-credito',
   templateUrl: './lista-credito.component.html',
   styleUrl: './lista-credito.component.css',
-  providers:[CreditoService]
+  providers:[CreditoService, UsuarioService]
 })
 export class ListaCreditoComponent implements OnInit{
 
-  constructor(private creditoService:CreditoService){}
+  constructor(private creditoService:CreditoService, 
+    private userService:UsuarioService,
+  private router:Router){}
   ngOnInit(): void {
-    this.getCreditosActivos();
+    this.userService.getUserName()
+    .subscribe(res=>{
+      if(res.status==Global.OK && res.body.userName===Global.USER){
+        this.getCreditosActivos();
+      }else{
+        this.router.navigate(['/refused']);
+      }
+    });
+    
   }
   filtro:string='';
   creditoInit:Credito = {} as Credito;
@@ -30,7 +42,8 @@ export class ListaCreditoComponent implements OnInit{
     this.creditoService.getCreditosActivos()
       .subscribe(res=>{
         if(res.status==200){
-          this.listaCreditos = res.body;
+          let array = res.body;
+          this.listaCreditos = array.sort((a:any,b:any)=>{new Date(a.fechaOpenCredito).getTime() - new Date(b.fechaOpenCredito).getTime() });
         }
       });
   }
@@ -64,7 +77,7 @@ export class ListaCreditoComponent implements OnInit{
   captaRespuesta(event:any){
     this.creditoInit = {} as Credito;
     if(event.flag==true){
-      this.getAllCreditos();
+      this.getCreditosActivos();
     }
     this.isAddCredito = false;
   }

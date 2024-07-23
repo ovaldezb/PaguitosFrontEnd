@@ -12,22 +12,22 @@ export class ClienteService {
   constructor(private _http:HttpClient) { }
 
   addCliente(cliente:Cliente):Observable<any>{
-    return this._http.post(Global.urlCliente,cliente,{observe:'response'});
+    return this._http.post(Global.backEndServer+Global.urlCliente,cliente,{observe:'response'});
   }
 
   getAllClientes():Observable<any>{
-    return this._http.get(Global.urlCliente,{observe:'response'});
+    return this._http.get(Global.backEndServer+Global.urlCliente,{observe:'response'});
   }
 
   getClientesByNombre(nombre:string):Observable<any>{
-    return this._http.get(Global.urlCliente+'/'+nombre,{observe:'response'});
+    return this._http.get(Global.backEndServer+Global.urlCliente+'/'+nombre,{observe:'response'});
   }
 
   updateCliente(idCliente:string, cliente:Cliente ):Observable<any>{
-    return this._http.put(Global.urlCliente+'/'+idCliente,cliente,{observe:'response'});
+    return this._http.put(Global.backEndServer+Global.urlCliente+'/'+idCliente,cliente,{observe:'response'});
   }
 
   deleteCliente(idCliente:string):Observable<any>{
-    return this._http.delete(Global.urlCliente+'/'+idCliente,{observe:'response'});
+    return this._http.delete(Global.backEndServer+Global.urlCliente+'/'+idCliente,{observe:'response'});
   }
 }

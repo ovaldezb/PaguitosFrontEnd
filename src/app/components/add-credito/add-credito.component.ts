@@ -8,16 +8,17 @@ import { ClienteService } from '../../service/cliente.service';
 import { CreditoService } from '../../service/credito.service';
 import Swal from 'sweetalert2';
 import { Global } from '../../service/Global';
+import { EmailService } from '../../service/email.service';
 
 @Component({
   selector: 'app-add-credito',
   templateUrl: './add-credito.component.html',
   styleUrl: './add-credito.component.css',
-  providers:[ClienteService, CreditoService]
+  providers:[ClienteService, CreditoService, EmailService]
 })
 export class AddCreditoComponent implements OnInit{
 
-constructor(private clienteService:ClienteService, private creditoService:CreditoService){}
+constructor(private clienteService:ClienteService, private creditoService:CreditoService, private emailService:EmailService){}
   
 
   @Input() creditoInit:Credito= {} as Credito;
@@ -128,6 +129,9 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
                       timer:1500
                     });
                     this.respuesta.emit({flag:true});
+                    this.emailService.sendEmailByIdCredito(res2.body.id).subscribe(res3=>{
+                      console.log(res3);
+                    });
                   }
                 });
               }
@@ -138,12 +142,16 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
           delete this.credito["_id"];
           this.creditoService.addCredito(this.credito)
               .subscribe(res2=>{
+                console.log(res2);
                 if(res2.status==Global.OK){
                   Swal.fire({
                     text:'Se guardo el crédito',
                     timer:1500
                   });
                   this.respuesta.emit({flag:true});
+                  this.emailService.sendEmailByIdCredito(res2.body.id).subscribe(res3=>{
+                    console.log(res3);
+                  });
                 }
               });
         }
