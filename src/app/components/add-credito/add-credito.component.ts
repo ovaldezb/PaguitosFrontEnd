@@ -23,13 +23,13 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
 
   @Input() creditoInit:Credito= {} as Credito;
   @Output() respuesta = new EventEmitter();
-  public cliente:Cliente= new Cliente('','','','','');
-  public credito:Credito= new Credito(new Equipo('','','',0),'',new Cliente('','','','',''),0,0,0,[],'quincenal',false, new Date(),'','');
-  public pago:Pago= new Pago(new Date(),0);
+  public cliente:Cliente= new Cliente('','','','','',true);
+  public credito:Credito= new Credito(new Equipo('','','',0),'',new Cliente('','','','','',true),0,0,0,[],'quincenales',false, new Date(),0,'');
+  public pago:Pago= new Pago(new Date(),0,'');
   pagos:Pago[]=[];
   clientes:Cliente[]=[];
   montoPago:number=0;
-  pendientePago:number=0;
+  //pendientePago:number=0;
   faCirclePlus = faCirclePlus;
   isNuevo:boolean = true;
   pagosDe:number=0;
@@ -40,7 +40,7 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
       this.isNuevo = false;
       this.credito = this.creditoInit;
       this.cliente = this.creditoInit.cliente;
-      this.pendientePago = this.credito.equipo.costo - this.credito.enganche - this.credito.pagos.reduce((a,pago)=>a+pago.montoPago,0);
+      this.credito.adeudo = this.credito.equipo.costo - this.credito.enganche - this.credito.pagos.reduce((a,pago)=>a+pago.montoPago,0);
       this.pagos = this.credito.pagos;
     }
   }
@@ -53,15 +53,16 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
       })
       .then(response=>{
         if(response.isConfirmed){
-          let totalPagado = this.credito.equipo.costo - this.credito.enganche - this.credito.pagos.reduce((a,pago)=>a+pago.montoPago,0) - this.credito.pago;
-          let isPagado = totalPagado <= 0 ? 'true' : 'false';
-          this.pago = new Pago(new Date(),this.credito.pago);
-          this.creditoService.addPago(this.pago,this.credito.id!, isPagado, new Intl.NumberFormat().format(totalPagado))
+          this.credito.adeudo = this.credito.equipo.costo - this.credito.enganche - this.credito.pagos.reduce((a,pago)=>a+pago.montoPago,0) - this.credito.pago;
+          let isPagado = this.credito.adeudo <= 0 ? 'true' : 'false';
+          this.pago = new Pago(new Date(),this.credito.pago, this.credito.nota!);
+          this.creditoService.addPago(this.pago,this.credito.id!, isPagado,this.credito.adeudo)
             .subscribe(res=>{
               if(res.status==Global.OK){
                 this.pagos = res.body.pagos;
-                this.pendientePago = this.credito.equipo.costo - this.credito.enganche - this.pagos.reduce((a,pago)=>a+pago.montoPago,0);
+                this.credito.adeudo = this.credito.equipo.costo - this.credito.enganche - this.pagos.reduce((a,pago)=>a+pago.montoPago,0);
                 this.isBuscar = true;
+                this.credito.nota = '';
                 Swal.fire({
                   text:'Se ha acreditado el pago',
                   timer:1500
@@ -73,6 +74,7 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
   }
 
   buscaClientePorNombre(){
+    console.log(this.cliente.nombre.length,this.clientes.length);
     if(this.cliente.nombre.length<3) {
       this.clientes = [];
       return;
@@ -94,13 +96,13 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
 
   calculaMontoPagos(){
    if(this.credito.equipo.costo != 0){
-    this.pendientePago = this.credito.equipo.costo - this.credito.enganche;
-    this.credito.pago = this.pendientePago / this.credito.noPagosTotales;
+    this.credito.adeudo = this.credito.equipo.costo - this.credito.enganche;
+    this.credito.pago = this.credito.adeudo / this.credito.noPagosTotales;
    } 
   }
 
   cancelaAltaCredito(){
-    this.credito = new Credito(new Equipo('','','',0),'',new Cliente('','','','',''),0,0,0,[],'quincenal',false, new Date(),'','');
+    this.credito = new Credito(new Equipo('','','',0),'',new Cliente('','','','','',true),0,0,0,[],'quincenales',false, new Date(),0,'');
     this.respuesta.emit({flag:this.isBuscar});
   }
 
@@ -119,7 +121,7 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
             .subscribe(res1=>{
               if(res1.status==Global.OK){
                 this.credito.idCliente = res1.body.id;
-                this.credito.adeudo = new Intl.NumberFormat().format(this.credito.equipo.costo - this.credito.enganche);
+                this.credito.adeudo = this.credito.equipo.costo - this.credito.enganche;
                 delete this.credito["_id"];
                 this.creditoService.addCredito(this.credito)
                 .subscribe(res2=>{
@@ -138,7 +140,7 @@ constructor(private clienteService:ClienteService, private creditoService:Credit
             });
         }else{
           this.credito.idCliente = this.cliente.id!;
-          this.credito.adeudo = new Intl.NumberFormat().format(this.credito.equipo.costo - this.credito.enganche);
+          this.credito.adeudo = this.credito.equipo.costo - this.credito.enganche;
           delete this.credito["_id"];
           this.creditoService.addCredito(this.credito)
               .subscribe(res2=>{

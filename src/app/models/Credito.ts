@@ -14,8 +14,9 @@ export class Credito{
     public plazoPago:string,
     public isPagado:boolean,
     public fechaOpenCredito:Date,
-    public adeudo:string,
+    public adeudo:number,
     public _id?:string,
-    public id?:string
+    public id?:string,
+    public nota?:string
   ){}
 }

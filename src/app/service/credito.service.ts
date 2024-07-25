@@ -24,7 +24,7 @@ export class CreditoService {
     return this._http.post(Global.backEndServer+Global.urlCredito,credito,{observe:'response'});
   }
 
-  addPago(pago:Pago, idCredito:string, isPagado:string, adeudo:string):Observable<any>{
+  addPago(pago:Pago, idCredito:string, isPagado:string, adeudo:number):Observable<any>{
     return this._http.put(Global.backEndServer+Global.urlCredito+'/'+idCredito+'/'+isPagado+'/'+adeudo,pago,{observe:'response'});
   }
 

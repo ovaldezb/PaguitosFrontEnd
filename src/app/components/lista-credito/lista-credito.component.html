@@ -60,7 +60,7 @@
           <td class="alignLeftRow" [class.selected]="i == HighlightRow">{{credito.cliente.correoElectronico}}</td>
           <td class="alignCenterRow" [class.selected]="i == HighlightRow">{{credito.equipo.marca}}-{{credito.equipo.modelo}}</td>
           <td class="alignCenterRow" [class.selected]="i == HighlightRow">{{credito.equipo.costo | currency}}</td>
-          <td class="alignCenterRow" [class.selected]="i == HighlightRow">${{credito.adeudo}}</td>
+          <td class="alignCenterRow" [class.selected]="i == HighlightRow">{{credito.adeudo | currency }}</td>
           <td class="alignCenterRow" [class.selected]="i == HighlightRow">{{credito.noPagosTotales - credito.pagos.length}}</td>
         </tr>
       </tbody>

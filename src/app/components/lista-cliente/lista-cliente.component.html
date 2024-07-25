@@ -1,13 +1,13 @@
 <div class="container">
   <h2>Lista de Clientes</h2>
-  <!--table class="table">
+  <table class="table">
     <thead>
       <tr>
-        <th style="text-align: right;"><button class="btn btn-info"><fa-icon [icon]="faUserPlus"></fa-icon></button></th>
-        <th style="text-align: right;"><button class="btn" (click)="openCloseModal(true)" [disabled]="HighlightRow==-1"><fa-icon [icon]="faPencil"></fa-icon></button></th>
+        <th style="text-align: right;"><button class="btn btn-info" (click)="openCloseModal(true, 'AGREGAR')"><fa-icon [icon]="faUserPlus"></fa-icon></button></th>
+        <th style="text-align: right;"><button class="btn" (click)="borraCliente()" [disabled]="HighlightRow==-1"><fa-icon [icon]="faTrash"></fa-icon></button></th>
       </tr>
     </thead>
-  </table-->
+  </table>
   <table class="table table-bordered">
     <colgroup>
     <col width="25%">
@@ -33,7 +33,7 @@
         <col width="25%">
         </colgroup>
       <tbody>
-        <tr *ngFor="let cliente of clientes; let i= index;" (click)="clickRow(i)" (dblclick)="openCloseModal(true)">
+        <tr *ngFor="let cliente of clientes; let i= index;" (click)="clickRow(i)" (dblclick)="openCloseModal(true, 'ACTUALIZAR')">
           <td [class.selected]="i == HighlightRow">{{cliente.nombre}}</td>
           <td [class.selected]="i == HighlightRow">{{cliente.telefono}}</td>
           <td [class.selected]="i == HighlightRow">{{cliente.correoElectronico}}</td>
@@ -45,29 +45,30 @@
 </div>
 <!-- Modal -->
 <div *ngIf="isOpenModal" class="modal fade show" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: block;" aria-labelledby="staticBackdropLabel" aria-modal="true" role="dialog">
+  
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Editar Usuario</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="openCloseModal(false)"></button>
+        <h5 class="modal-title" id="staticBackdropLabel">{{txtAction}} Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="openCloseModal(false,'AGREGAR')"></button>
       </div>
       <div class="modal-body">
        <div class="row">
         <div class="col">Nombre:</div>
         <div class="col">
-          <input type="text" class="form-control" name="nombre" #nombre="ngModel" [(ngModel)]="cliente.nombre">
+          <input type="text" class="form-control" name="nombre" #nombre="ngModel" [(ngModel)]="cliente.nombre" required>
         </div>
        </div>
        <div class="row">
         <div class="col">Teléfono</div>
         <div class="col">
-          <input type="text" class="form-control" name="telefono" #telefono="ngModel" [(ngModel)]="cliente.telefono">
+          <input type="text" class="form-control" name="telefono" #telefono="ngModel" [(ngModel)]="cliente.telefono" required>
         </div>
        </div>
        <div class="row">
         <div class="col">Correo:</div>
         <div class="col">
-          <input type="text" class="form-control" name="correo" #correo="ngModel" [(ngModel)]="cliente.correoElectronico">
+          <input type="text" class="form-control" name="correo" #correo="ngModel" [(ngModel)]="cliente.correoElectronico" required>
         </div>
        </div>
        <div class="row">
@@ -78,8 +79,9 @@
        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="openCloseModal(false)">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="actualizarCliente()">OK</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="openCloseModal(false,'AGREGAR')">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="agregarActualizar()" [disabled]="cliente.nombre==''|| cliente.telefono==''|| cliente.correoElectronico==''">{{actionBtn}}</button>
       </div>
     </div>
   </div>
+</div>

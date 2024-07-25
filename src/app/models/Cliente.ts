@@ -6,6 +6,7 @@ export class Cliente{
     public telefono: string,
     public correoElectronico: string,
     public direccion: string,
+    public isActive:boolean,
     public id?: string
   ){}
 }

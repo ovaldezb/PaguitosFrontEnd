@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { faUserPlus, faPencil } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Cliente } from '../../models/Cliente';
 import { ClienteService } from '../../service/cliente.service';
 import { Global } from '../../service/Global';
@@ -31,11 +31,13 @@ export class ListaClienteComponent implements OnInit {
    
   }
   faUserPlus = faUserPlus;
-  faPencil = faPencil;
+  faTrash = faTrash;
   clientes:Cliente[] = [];
-  cliente:Cliente=new Cliente('','','','','');
+  cliente:Cliente=new Cliente('','','','','',true);
   HighlightRow:number=-1;
   isOpenModal:boolean=false;
+  actionBtn:string=Global.AGREGAR;
+  txtAction:string='Agregar';
 
   getAllClientes(){
     this.clienteService.getAllClientes()
@@ -46,12 +48,75 @@ export class ListaClienteComponent implements OnInit {
     });
   }
 
-  openCloseModal(flag:boolean){
-    console.log(flag)
+  openCloseModal(flag:boolean, action:string){
+    if(action===Global.AGREGAR){
+      this.cliente = new Cliente('','','','','',true);
+      this.actionBtn = Global.AGREGAR;
+      this.txtAction = 'Agregar';
+    }else{
+      this.txtAction = 'Actualizar';
+      this.actionBtn = Global.ACTUALIZAR;
+    }
+    
     this.isOpenModal = flag;
   }
 
-  
+  agregarActualizar(){
+    if(this.actionBtn===Global.AGREGAR){
+      this.addCliente();
+    }else{
+      this.actualizarCliente();
+    }
+  }
+
+  borraCliente(){
+    Swal.fire({
+      titleText:'Desea eliminar este cliente?',
+      showCancelButton:true,
+      confirmButtonText:'Si'
+    })
+    .then(response=>{
+      if(response.isConfirmed){
+        this.clienteService.deleteCliente(this.cliente.id!)
+        .subscribe(res=>{
+          if(res.status===Global.OK){
+            Swal.fire({
+              titleText:'El cliente se ha eliminado',
+              timer:1500
+            });
+            this.HighlightRow = -1;
+            this.getAllClientes();
+          }
+        })
+      }
+    });
+  }
+
+  addCliente(){
+    Swal.fire({
+      titleText:'Desea agregar éste cliente?',
+      showCancelButton: true,
+      confirmButtonText:'Si'
+    })
+    .then(response=>{
+      if(response.isConfirmed){
+        this.clienteService.addCliente(this.cliente)
+        .subscribe(res=>{
+          if(res.status === Global.OK){
+            this.limpiar();
+            Swal.fire({
+              titleText:'El cliente se ha agregado!',
+              timer:1500
+            });
+            this.HighlightRow = -1;
+            this.openCloseModal(false, Global.AGREGAR);
+            this.getAllClientes();
+            this.limpiar();
+          }
+        });
+      }
+    });
+  }
 
   actualizarCliente(){
     Swal.fire({
@@ -69,8 +134,9 @@ export class ListaClienteComponent implements OnInit {
               timer:1500
             });
             this.HighlightRow = -1;
-            this.openCloseModal(false);
+            this.openCloseModal(false, Global.AGREGAR);
             this.getAllClientes();
+            this.limpiar();
           }
         });
       }
@@ -81,4 +147,8 @@ export class ListaClienteComponent implements OnInit {
     this.HighlightRow = index;
     this.cliente = this.clientes[index];
   }
+
+limpiar(){
+  this.cliente=new Cliente('','','','','',true);
+}
 }

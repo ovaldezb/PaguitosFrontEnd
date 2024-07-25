@@ -83,8 +83,8 @@
           <label for="">Periodo Pago</label>
         </div> 
         <select class="form-select" name="plazoPago" [(ngModel)]="credito.plazoPago" id="" [disabled]="!isNuevo">
-          <option value="quincenal">Quincenal</option>
-          <option value="mensual">Mensual</option>
+          <option value="quincenales">Quincenal</option>
+          <option value="mensuales">Mensual</option>
         </select>
       </div>
       <div class="col-md-2 mb-3"></div>
@@ -92,7 +92,7 @@
         <div style="text-align: center;">
           <label for="">Por pagar: </label>
         </div>
-        <input type="text" class="form-control" name="" disabled value="{{pendientePago | currency}}">
+        <input type="text" class="form-control" name="" disabled value="{{credito.adeudo| currency}}">
       </div>
       <div class="col-md-2 mb-3">
         <div style="text-align: center;">
@@ -107,48 +107,74 @@
       <label for="">Pagos:</label>
     </div>
   </div>
-  <div *ngIf="!isNuevo" class="row card" style="border: 1px solid goldenrod;height: 250px;">
-    <div class="col">
-      <div class="row">
-        <div class="col">
-          <table class="table"> 
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Monto</th>
-                <th>Fecha</th>
+  <div *ngIf="!isNuevo" class="row" style="border: 1px solid goldenrod;height: 220px;">
+      <div class="col-8">
+        <table class="table "> 
+          <colgroup>
+            <col width="15%">
+            <col width="25%">
+            <col width="20%">
+            <col width="40%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="alignCenterRow">No</th>
+              <th class="alignCenterRow">Monto</th>
+              <th class="alignCenterRow">Fecha</th>
+              <th class="alignCenterRow">Nota</th>
+            </tr>
+          </thead>
+        </table>
+        <div style="margin-top: -15px;height: 170px;overflow: auto;border: 1px solid bisque;">
+          <table class="table">
+            <colgroup>
+              <col width="15%">
+              <col width="25%">
+              <col width="20%">
+              <col width="40%">
+            </colgroup>
+            <tbody>
+              <tr *ngFor="let pago of pagos; let i = index">
+                <td class="alignCenterRow">{{i+1}}/{{credito.noPagosTotales}}</td>
+                <td class="alignCenterRow">{{pago.montoPago | currency:'MXN'}}</td>
+                <td class="alignCenterRow">{{pago.fechaPago | date:'dd-MMM-YYYY'}}</td>
+                <td class="alignCenterRow"><textarea name="" id="" rows="1" disabled>{{pago.nota}}</textarea></td>
               </tr>
-            </thead>
+            </tbody>
           </table>
-          <div>
-            <table class="table">
-              <tbody>
-                <tr *ngFor="let pago of pagos; let i = index">
-                  <td>{{i+1}}/{{credito.noPagosTotales}}</td>
-                  <td>{{pago.montoPago | currency:'MXN'}}</td>
-                  <td>{{pago.fechaPago | date:'dd-MMM-YYYY'}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
-        <div class="col">
-          <div class="row"></div>
-          <div class="row g-3">
-            <div class="col mb-3">Cantidad a Pagar</div>
-            <div class="col mb-3">
-              <input type="number" class="form-control" name="pago" #pago="ngModel" [(ngModel)]="credito.pago">
-            </div>
-            <div class="col mb-3">
-              <button class="btn btn-info" (click)="addPago()">Pagar</button>
-            </div>
+      </div>
+      <div class="col-4">
+        <div class="row">
+          <div class="col">
+              <div class="row g-3">
+                <div class="col-4 mb-3">Cantidad</div>
+                <div class="col-6 mb-3">
+                  <input type="number" class="form-control" name="pago" #pago="ngModel" [(ngModel)]="credito.pago">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-4">
+                  <label for="">Nota:</label>
+                </div>
+                <div class="col-6">
+                  <textarea class="form-control" name="nota" #nota="ngModel" [(ngModel)]="credito.nota"></textarea>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col mb-3">
+                  <div class="col mb-3" style="text-align: right;">
+                    <button class="btn btn-info" (click)="addPago()">Pagar</button>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       </div>
-    </div> 
+      
   </div>
   <div style="text-align: right;">
     <button class="btn btn-secondary" (click)="cancelaAltaCredito()">Cerrar</button>
-    <button *ngIf="isNuevo" class="btn btn-info" (click)="agregaEditaCredito()">Agregar</button>
+    <button *ngIf="isNuevo" class="btn btn-info" (click)="agregaEditaCredito()" [disabled]="cliente.nombre==''||cliente.telefono==''||cliente.correoElectronico==''||credito.equipo.marca==''||credito.equipo.modelo==''||credito.equipo.costo==0 || credito.enganche==0 || credito.noPagosTotales==0">Agregar</button>
   </div>
 </div>
