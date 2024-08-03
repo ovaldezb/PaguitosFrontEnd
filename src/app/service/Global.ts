@@ -6,7 +6,7 @@ export var Global = {
   urlEmail:'/api/email',
   TAB_CREDITO:'CREDITOS',
   OK:200,
-  USER:'macbookpro',
+  USER:'marco',
   AGREGAR:'AGREGAR',
   ACTUALIZAR:'ACTUALIZAR'
 }
